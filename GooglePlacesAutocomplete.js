@@ -58,10 +58,6 @@ const defaultStyles = {
     height: 44,
     flexDirection: 'row',
   },
-  separator: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: '#c8c7cc',
-  },
   description: {},
   loader: {
     flexDirection: 'row',
@@ -525,20 +521,6 @@ export default class GooglePlacesAutocomplete extends Component {
     );
   }
 
-  _renderRowData = (rowData) => {
-    if (this.props.renderRow) {
-      return this.props.renderRow(rowData);
-    }
-
-    return (
-      <Text style={[{flex: 1}, this.props.suppressDefaultStyles ? {} : defaultStyles.description, this.props.styles.description, rowData.isPredefinedPlace ? this.props.styles.predefinedPlacesDescription : {}]}
-        numberOfLines={this.props.numberOfLines}
-      >
-        {this._renderDescription(rowData)}
-      </Text>
-    );
-  }
-
   _renderDescription = (rowData) => {
     if (this.props.renderDescription) {
       return this.props.renderDescription(rowData);
@@ -559,40 +541,6 @@ export default class GooglePlacesAutocomplete extends Component {
     return null;
   }
 
-  _renderRow = (rowData = {}, sectionID, rowID) => {
-    return (
-      <ScrollView
-        style={{ flex: 1 }}
-        scrollEnabled={this.props.isRowScrollable}
-        keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps}
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}>
-        <TouchableHighlight
-          style={{ width: WINDOW.width }}
-          onPress={() => this._onPress(rowData)}
-          underlayColor={this.props.listUnderlayColor || "#c8c7cc"}
-        >
-          <View style={[this.props.suppressDefaultStyles ? {} : defaultStyles.row, this.props.styles.row, rowData.isPredefinedPlace ? this.props.styles.specialItemRow : {}]}>
-            {this._renderRowData(rowData)}
-            {this._renderLoader(rowData)}
-          </View>
-        </TouchableHighlight>
-      </ScrollView>
-    );
-  }
-
-  _renderSeparator = (sectionID, rowID) => {
-    if (rowID == this.state.dataSource.length - 1) {
-      return null
-    }
-
-    return (
-      <View
-        key={ `${sectionID}-${rowID}` }
-        style={[this.props.suppressDefaultStyles ? {} : defaultStyles.separator, this.props.styles.separator]} />
-    );
-  }
 
   _onBlur = () => {
     this.triggerBlur();
@@ -662,7 +610,6 @@ export default class GooglePlacesAutocomplete extends Component {
           data={this.state.dataSource}
           keyExtractor={keyGenerator}
           extraData={[this.state.dataSource, this.props]}
-          ItemSeparatorComponent={this._renderSeparator}
           renderItem={({ item }) => this.props.renderRow(item)}
           ListFooterComponent={this._renderPoweredLogo}
           {...this.props}
